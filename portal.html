@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Client Portal | Murrey Consulting</title>
+  <meta name="description" content="Free financial tools — tax & salary calculator and compliance deadline tracker — from Murrey Consulting. No login required." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="icon" href="assets/logo.png" type="image/png" />
+  <script src="js/theme.js"></script>
+</head>
+<body>
+  <header class="nav" id="nav">
+    <div class="container nav-inner">
+      <a href="index.html" class="brand" aria-label="Murrey Consulting home">
+        <img src="assets/logo.png" alt="Murrey Consulting" class="brand-mark" />
+        <span class="brand-text">Murrey<strong>Consulting</strong></span>
+      </a>
+      <nav class="nav-links" id="navLinks">
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="portal.html" class="btn btn-sm btn-primary nav-cta active">Client Portal</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <section class="page-header">
+    <div class="page-header-bg" style="background-image:url('assets/portal-ai.jpg')"></div>
+    <div class="container page-header-inner reveal">
+      <span class="eyebrow light">Client Portal</span>
+      <h1>Financial Intelligence, Always On</h1>
+      <p>Free tools to estimate your tax and stay on top of every SARS and CIPC deadline — no login required.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="tabs reveal">
+        <div class="tab-btns" role="tablist">
+          <button class="tab-btn active" data-tab="calc" role="tab">Tax &amp; Salary Calculator</button>
+          <button class="tab-btn" data-tab="interest" role="tab">Official Interest</button>
+          <button class="tab-btn" data-tab="prime" role="tab">Prime Rate</button>
+          <button class="tab-btn" data-tab="provtax" role="tab">Provisional Tax</button>
+          <button class="tab-btn" data-tab="vehicle" role="tab">Vehicle Finance</button>
+          <button class="tab-btn" data-tab="deadlines" role="tab">Deadline Tracker</button>
+        </div>
+
+        <!-- Calculator -->
+        <div class="tab-panel active" id="tab-calc" role="tabpanel">
+          <div class="calc-grid">
+            <div class="calc-inputs">
+              <div class="seg">
+                <button class="seg-btn active" data-mode="income">Annual Income Tax</button>
+                <button class="seg-btn" data-mode="payroll">Net Salary (PAYE)</button>
+              </div>
+              <div class="calc-mode" id="mode-income">
+                <label>Annual Taxable Income (R)
+                  <input type="number" id="incomeAmount" placeholder="e.g. 480000" min="0" />
+                </label>
+                <label>Age Group
+                  <select id="ageGroup">
+                    <option value="under65">Under 65</option>
+                    <option value="65to74">65 – 74</option>
+                    <option value="75plus">75 and older</option>
+                  </select>
+                </label>
+              </div>
+              <div class="calc-mode hidden" id="mode-payroll">
+                <label>Gross Monthly Salary (R)
+                  <input type="number" id="grossSalary" placeholder="e.g. 35000" min="0" />
+                </label>
+                <label>Age Group
+                  <select id="ageGroupPay">
+                    <option value="under65">Under 65</option>
+                    <option value="65to74">65 – 74</option>
+                    <option value="75plus">75 and older</option>
+                  </select>
+                </label>
+                <p class="hint">Calculates an employee's net (take-home) pay after PAYE and UIF deductions.</p>
+              </div>
+              <button class="btn btn-primary btn-block" id="calcBtn">Calculate</button>
+              <p class="disclaimer">Based on the 2025/2026 SARS tables. For guidance only — Murrey Consulting can manage all filings on your behalf.</p>
+            </div>
+            <div class="calc-results" id="calcResults">
+              <div class="calc-empty">Enter values and click <strong>Calculate</strong> to see your results.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Official rate of interest -->
+        <div class="tab-panel" id="tab-interest" role="tabpanel">
+          <div class="calc-grid">
+            <div class="calc-inputs">
+              <label>Outstanding Loan / Debt Amount (R)
+                <input type="number" id="intPrincipal" placeholder="e.g. 500000" min="0" />
+              </label>
+              <label>Start Date
+                <input type="date" id="intStart" />
+              </label>
+              <label>End Date
+                <input type="date" id="intEnd" />
+              </label>
+              <button class="btn btn-primary btn-block" id="intBtn">Calculate Interest</button>
+              <p class="disclaimer">Uses the SARS &ldquo;official rate of interest&rdquo; (Interest Rates Table 3), applied on a daily basis and automatically adjusted for every rate change within the period. For guidance only.</p>
+            </div>
+            <div class="calc-results" id="intResults">
+              <div class="calc-empty">Enter an amount and a date range, then click <strong>Calculate Interest</strong>.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SARB prime lending rate -->
+        <div class="tab-panel" id="tab-prime" role="tabpanel">
+          <div class="calc-grid">
+            <div class="calc-inputs">
+              <label>Loan / Outstanding Amount (R)
+                <input type="number" id="primePrincipal" placeholder="e.g. 500000" min="0" />
+              </label>
+              <label>Start Date
+                <input type="date" id="primeStart" />
+              </label>
+              <label>End Date
+                <input type="date" id="primeEnd" />
+              </label>
+              <label>Rate Adjustment — prime ± % (optional)
+                <input type="number" id="primeMargin" placeholder="e.g. 2 for prime + 2%" step="0.25" />
+              </label>
+              <button class="btn btn-primary btn-block" id="primeBtn">Calculate Interest</button>
+              <p class="disclaimer">Uses the SARB prime lending rate (repo rate + 3.5%), applied daily and adjusted for every published rate change in the period. Add a margin for &ldquo;prime + x%&rdquo; facilities. For guidance only.</p>
+            </div>
+            <div class="calc-results" id="primeResults">
+              <div class="calc-empty">Enter an amount and a date range, then click <strong>Calculate Interest</strong>.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Provisional tax -->
+        <div class="tab-panel" id="tab-provtax" role="tabpanel">
+          <div class="calc-grid">
+            <div class="calc-inputs">
+              <label>Taxpayer Type
+                <select id="ptType">
+                  <option value="company">Company — 27%</option>
+                  <option value="sbc">Small Business Corporation (SBC)</option>
+                  <option value="trust">Trust — 45%</option>
+                </select>
+              </label>
+              <label>Estimated Annual Taxable Income (R)
+                <input type="number" id="ptIncome" placeholder="e.g. 800000" min="0" />
+              </label>
+              <label>Provisional Tax Already Paid (R)
+                <input type="number" id="ptPaid" placeholder="e.g. 0" min="0" />
+              </label>
+              <button class="btn btn-primary btn-block" id="ptBtn">Calculate</button>
+              <p class="disclaimer">Company 27%, Trust 45%, and SBC sliding scale (years of assessment ending Mar 2025 – Mar 2026). For guidance only — Murrey Consulting can prepare and submit your IRP6.</p>
+            </div>
+            <div class="calc-results" id="ptResults">
+              <div class="calc-empty">Select a taxpayer type, enter your figures, then click <strong>Calculate</strong>.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vehicle finance -->
+        <div class="tab-panel" id="tab-vehicle" role="tabpanel">
+          <div class="calc-grid">
+            <div class="calc-inputs">
+              <label>Vehicle Price (R)
+                <input type="number" id="vfPrice" placeholder="e.g. 350000" min="0" />
+              </label>
+              <label>Deposit (R)
+                <input type="number" id="vfDeposit" placeholder="e.g. 35000" min="0" />
+              </label>
+              <label>Interest Rate (% per year)
+                <input type="number" id="vfRate" placeholder="e.g. 11.5" step="0.25" value="11.5" />
+              </label>
+              <label>Loan Term (months)
+                <input type="number" id="vfTerm" placeholder="e.g. 72" min="1" value="72" />
+              </label>
+              <label>Balloon / Residual (% of price)
+                <input type="number" id="vfBalloon" placeholder="e.g. 10" step="1" />
+              </label>
+              <button class="btn btn-primary btn-block" id="vfBtn">Calculate Instalment</button>
+              <p class="disclaimer">Estimates the monthly instalment on a vehicle finance agreement (tip: SA banks often quote a rate of &ldquo;prime + a margin&rdquo;). Excludes initiation and monthly service fees and insurance. For guidance only.</p>
+            </div>
+            <div class="calc-results" id="vfResults">
+              <div class="calc-empty">Enter the vehicle price and term, then click <strong>Calculate Instalment</strong>.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Deadlines -->
+        <div class="tab-panel" id="tab-deadlines" role="tabpanel">
+          <div class="dl-filter">
+            <button class="chip active" data-cat="all">All</button>
+            <button class="chip" data-cat="Tax">Tax</button>
+            <button class="chip" data-cat="VAT">VAT</button>
+            <button class="chip" data-cat="Payroll">Payroll</button>
+            <button class="chip" data-cat="CIPC">CIPC</button>
+          </div>
+          <div class="dl-list" id="dlList"><!-- injected --></div>
+          <p class="disclaimer">Dates are for guidance only. Always verify with SARS eFiling or the CIPC portal.</p>
+        </div>
+      </div>
+      <p class="tools-hint reveal">Have a specific question? Tap the <strong>Ask us</strong> button in the corner to chat with the Murrey Assistant any time.</p>
+    </div>
+  </section>
+
+  <section class="cta-band">
+    <div class="cta-band-bg" style="background-image:url('assets/banner-skyline.png')"></div>
+    <div class="container reveal">
+      <h2>Need More Than a Calculator?</h2>
+      <p>Let our team handle your filings end-to-end. Reach out for a free, no-obligation consultation.</p>
+      <a href="contact.html" class="btn btn-light">Get in Touch</a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <a href="index.html" class="brand">
+          <img src="assets/logo.png" alt="Murrey Consulting" class="brand-mark" />
+          <span class="brand-text">Murrey<strong>Consulting</strong></span>
+        </a>
+        <p>Trusted accounting, taxation, company secretarial, and consulting services across South Africa.</p>
+      </div>
+      <div class="footer-cols">
+        <div>
+          <h5>Services</h5>
+          <a href="services.html#accounting">Accounting</a>
+          <a href="services.html#taxation">Taxation</a>
+          <a href="services.html#secretarial">Company Secretarial</a>
+          <a href="services.html#consulting">Business Consulting</a>
+        </div>
+        <div>
+          <h5>Company</h5>
+          <a href="about.html">About</a>
+          <a href="portal.html">Client Portal</a>
+          <a href="contact.html">Contact</a>
+        </div>
+        <div>
+          <h5>Legal</h5>
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="terms.html">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+    <div class="container footer-base">
+      <span>© <span id="year"></span> Murrey Consulting. All rights reserved.</span>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/chatbot.js"></script>
+</body>
+</html>

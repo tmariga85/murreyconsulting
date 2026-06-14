@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact | Murrey Consulting</title>
+  <meta name="description" content="Get in touch with Murrey Consulting for accounting, tax, and company secretarial services. We respond within 24 hours." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="icon" href="assets/logo.png" type="image/png" />
+  <script src="js/theme.js"></script>
+</head>
+<body>
+  <header class="nav" id="nav">
+    <div class="container nav-inner">
+      <a href="index.html" class="brand" aria-label="Murrey Consulting home">
+        <img src="assets/logo.png" alt="Murrey Consulting" class="brand-mark" />
+        <span class="brand-text">Murrey<strong>Consulting</strong></span>
+      </a>
+      <nav class="nav-links" id="navLinks">
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="about.html">About</a>
+        <a href="contact.html" class="active">Contact</a>
+        <a href="portal.html" class="btn btn-sm btn-primary nav-cta">Client Portal</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <section class="page-header">
+    <div class="page-header-bg" style="background-image:url('assets/contact-banner.jpg')"></div>
+    <div class="container page-header-inner reveal">
+      <span class="eyebrow light">Contact Us</span>
+      <h1>Let's Talk About Your Business</h1>
+      <p>Ready to simplify your financial operations? Fill out the form below and our team will be in touch within 24 hours.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container contact-grid">
+      <div class="reveal">
+        <span class="eyebrow">Get in Touch</span>
+        <h2>We're Here to Help</h2>
+        <p>Get in touch with our team for guidance specific to your situation — accounting, tax, company secretarial, or a free quote.</p>
+        <ul class="contact-list">
+          <li>
+            <span class="ci">✉</span>
+            <div><strong>Email</strong><a href="mailto:t@murreyconsulting.co.za">t@murreyconsulting.co.za</a></div>
+          </li>
+          <li>
+            <span class="ci">☎</span>
+            <div><strong>Phone</strong><a href="tel:+27813574817">+27 81 357 4817</a></div>
+          </li>
+          <li>
+            <span class="ci">⚲</span>
+            <div><strong>Office</strong><span>27A 1st Street, Abbotsford, Johannesburg, 2192, Gauteng</span></div>
+          </li>
+        </ul>
+      </div>
+      <form class="contact-form reveal" id="contactForm" novalidate>
+        <div class="field">
+          <input type="text" id="cf-name" name="name" required placeholder=" " />
+          <label for="cf-name">Full name</label>
+        </div>
+        <div class="row">
+          <div class="field">
+            <input type="email" id="cf-email" name="email" required placeholder=" " />
+            <label for="cf-email">Email</label>
+          </div>
+          <div class="field">
+            <input type="tel" id="cf-phone" name="phone" placeholder=" " />
+            <label for="cf-phone">Phone</label>
+          </div>
+        </div>
+        <div class="field">
+          <select id="cf-service" name="service" required>
+            <option value="" selected disabled>Select a service…</option>
+            <option>Accounting Services</option>
+            <option>Taxation Services</option>
+            <option>Company Secretarial</option>
+            <option>Business Consulting</option>
+            <option>I'd like a quote</option>
+          </select>
+          <label for="cf-service" class="static-label">Service interest</label>
+        </div>
+        <div class="field">
+          <textarea id="cf-msg" name="message" rows="4" placeholder=" "></textarea>
+          <label for="cf-msg">Anything we should know?</label>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Send Message</button>
+        <p class="form-note" id="formNote" hidden></p>
+      </form>
+    </div>
+  </section>
+
+  <!-- Full-width map -->
+  <div class="map-full" aria-label="Our location">
+    <iframe
+      title="Murrey Consulting location — 27A 1st Street, Abbotsford, Johannesburg"
+      src="https://www.google.com/maps?q=27A%201st%20Street%2C%20Abbotsford%2C%20Johannesburg%2C%202192&output=embed"
+      loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+  </div>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <a href="index.html" class="brand">
+          <img src="assets/logo.png" alt="Murrey Consulting" class="brand-mark" />
+          <span class="brand-text">Murrey<strong>Consulting</strong></span>
+        </a>
+        <p>Trusted accounting, taxation, company secretarial, and consulting services across South Africa.</p>
+      </div>
+      <div class="footer-cols">
+        <div>
+          <h5>Services</h5>
+          <a href="services.html#accounting">Accounting</a>
+          <a href="services.html#taxation">Taxation</a>
+          <a href="services.html#secretarial">Company Secretarial</a>
+          <a href="services.html#consulting">Business Consulting</a>
+        </div>
+        <div>
+          <h5>Company</h5>
+          <a href="about.html">About</a>
+          <a href="portal.html">Client Portal</a>
+          <a href="contact.html">Contact</a>
+        </div>
+        <div>
+          <h5>Legal</h5>
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="terms.html">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+    <div class="container footer-base">
+      <span>© <span id="year"></span> Murrey Consulting. All rights reserved.</span>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/chatbot.js"></script>
+</body>
+</html>

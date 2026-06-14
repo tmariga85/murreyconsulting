@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terms of Service | Murrey Consulting</title>
+  <meta name="description" content="The terms governing the use of Murrey Consulting's services and website." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="icon" href="assets/logo.png" type="image/png" />
+  <script src="js/theme.js"></script>
+  <style>
+    .legal { padding: 3rem 0 5rem; }
+    .legal .container { width: min(820px, 92%); }
+    .legal h1 { font-size: clamp(2rem, 4vw, 2.8rem); margin-bottom: .5rem; }
+    .legal .updated { color: var(--muted); font-size: .9rem; margin-bottom: 2.5rem; }
+    .legal h2 { font-size: 1.3rem; margin: 2rem 0 .8rem; }
+    .legal p, .legal li { font-size: 1rem; }
+    .legal ul { margin: .6rem 0 1rem 1.2rem; display: grid; gap: .4rem; }
+    .back { display: inline-flex; align-items: center; gap: .4rem; color: var(--green-600); font-weight: 700; margin-bottom: 2rem; }
+  </style>
+</head>
+<body>
+  <header class="nav scrolled">
+    <div class="container nav-inner">
+      <a href="index.html#home" class="brand">
+        <img src="assets/logo.png" alt="Murrey Consulting" class="brand-mark" />
+        <span class="brand-text">Murrey<strong>Consulting</strong></span>
+      </a>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="portal.html" class="btn btn-sm btn-primary nav-cta">Client Portal</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="legal">
+    <div class="container">
+      <a href="index.html" class="back">← Back to home</a>
+      <h1>Terms of Service</h1>
+      <p class="updated">Last updated: June 2026</p>
+
+      <p>These terms govern your engagement with Murrey Consulting and your use of this website. By engaging our services, you agree to the following.</p>
+
+      <h2>Our services</h2>
+      <p>We provide accounting, taxation, company secretarial, and business consulting services. The specific scope of each engagement is agreed in writing with you before work begins.</p>
+
+      <h2>Your responsibilities</h2>
+      <ul>
+        <li>Provide accurate, complete, and up-to-date information and documentation as requested.</li>
+        <li>Notify us promptly of any changes that may affect your tax or compliance obligations.</li>
+        <li>Maintain confidentiality of any login credentials provided for our client portal.</li>
+        <li>Settle invoices in accordance with the agreed payment terms.</li>
+      </ul>
+
+      <h2>Fees and payment</h2>
+      <p>Fees are agreed per engagement and are payable as invoiced. We reserve the right to suspend services pending settlement of overdue accounts.</p>
+
+      <h2>Professional guidance</h2>
+      <p>Information provided on this website — including any calculators, deadline trackers, and general answers — is for general guidance and does not constitute professional advice. Always confirm specifics with our team or the relevant authority.</p>
+
+      <h2>Limitation of liability</h2>
+      <p>We exercise reasonable professional care in all engagements. To the extent permitted by law, our liability is limited to the fees paid for the relevant service.</p>
+
+      <h2>Contact us</h2>
+      <p>Questions about these terms? Email us at <a href="mailto:t@murreyconsulting.co.za">t@murreyconsulting.co.za</a>.</p>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-base" style="border:0;padding-top:0">
+      <span>© <span id="year"></span> Murrey Consulting. All rights reserved.</span>
+      <a href="privacy.html">Privacy Policy</a>
+    </div>
+  </footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+  <script src="js/chatbot.js"></script>
+</body>
+</html>

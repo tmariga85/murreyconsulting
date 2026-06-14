@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Services | Murrey Consulting</title>
+  <meta name="description" content="Accounting, taxation, company secretarial, and business consulting services for South African businesses." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="icon" href="assets/logo.png" type="image/png" />
+  <script src="js/theme.js"></script>
+</head>
+<body>
+  <header class="nav" id="nav">
+    <div class="container nav-inner">
+      <a href="index.html" class="brand" aria-label="Murrey Consulting home">
+        <img src="assets/logo.png" alt="Murrey Consulting" class="brand-mark" />
+        <span class="brand-text">Murrey<strong>Consulting</strong></span>
+      </a>
+      <nav class="nav-links" id="navLinks">
+        <a href="index.html">Home</a>
+        <a href="services.html" class="active">Services</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="portal.html" class="btn btn-sm btn-primary nav-cta">Client Portal</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Page header -->
+  <section class="page-header">
+    <div class="page-header-bg" style="background-image:url('assets/banner-aerial.png')"></div>
+    <div class="container page-header-inner reveal">
+      <span class="eyebrow light">Our Services</span>
+      <h1>Comprehensive Financial Services</h1>
+      <p>Four pillars of expertise. One dedicated partner. From bookkeeping to compliance filings — every detail matters.</p>
+    </div>
+  </section>
+
+  <section class="section svc-section">
+    <canvas class="svc-canvas" id="svcParticles" aria-hidden="true"></canvas>
+    <div class="container" style="max-width:920px; position:relative; z-index:1">
+      <article class="svc-detail reveal" id="accounting">
+        <span class="svc-no">01</span>
+        <div class="svc-ic"><svg viewBox="0 0 24 24"><path d="M3 3v18h18M7 14l3-3 3 3 5-6"/></svg></div>
+        <div>
+          <h3>Accounting Services</h3>
+          <p>From daily bookkeeping to comprehensive annual financial statements, we ensure your financial records are accurate, up-to-date, and compliant with South African standards.</p>
+          <div class="svc-list">
+            <span>Comprehensive bookkeeping &amp; record keeping</span>
+            <span>Annual financial statements</span>
+            <span>Monthly financial reports with actionable insights</span>
+            <span>Management reporting for decision-making</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="svc-detail reveal" id="taxation">
+        <span class="svc-no">02</span>
+        <div class="svc-ic"><svg viewBox="0 0 24 24"><path d="M9 7h6M9 11h6M9 15h4M6 3h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/></svg></div>
+        <div>
+          <h3>Taxation Services</h3>
+          <p>Our tax experts navigate the complexities of SARS regulations to ensure full compliance while identifying opportunities to optimize your tax obligations.</p>
+          <div class="svc-list">
+            <span>Individual &amp; corporate income tax returns</span>
+            <span>Provisional tax and VAT returns</span>
+            <span>Audits, disputes &amp; penalty negotiations</span>
+            <span>Tax compliance status management</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="svc-detail reveal" id="secretarial">
+        <span class="svc-no">03</span>
+        <div class="svc-ic"><svg viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V7l8-4z"/></svg></div>
+        <div>
+          <h3>Company Secretarial Services</h3>
+          <p>From company registration to ongoing statutory compliance, we handle the administrative complexities so you can focus on your business.</p>
+          <div class="svc-list">
+            <span>New company &amp; close corporation registration</span>
+            <span>Annual returns, amendments &amp; CIPC compliance</span>
+            <span>Maintenance of share registers</span>
+            <span>Minutes &amp; resolutions management</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="svc-detail reveal" id="consulting">
+        <span class="svc-no">04</span>
+        <div class="svc-ic"><svg viewBox="0 0 24 24"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg></div>
+        <div>
+          <h3>Business Consulting</h3>
+          <p>We provide high-level business consulting services to help organisations navigate complex financial transactions, design robust systems, and establish strong internal controls.</p>
+          <div class="svc-list">
+            <span>Facilitation &amp; negotiation on large transactions</span>
+            <span>Tailored financial &amp; operational systems design</span>
+            <span>Internal control frameworks</span>
+            <span>Risk mitigation &amp; advisory</span>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- CTA band -->
+  <section class="cta-band">
+    <div class="cta-band-bg" style="background-image:url('assets/banner-skyline.png')"></div>
+    <div class="container reveal">
+      <h2>Need Expert Advice?</h2>
+      <p>Tell us what you need and we'll put together a tailored quote — usually within 24 hours.</p>
+      <a href="contact.html" class="btn btn-light">Get a Free Quote</a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <a href="index.html" class="brand">
+          <img src="assets/logo.png" alt="Murrey Consulting" class="brand-mark" />
+          <span class="brand-text">Murrey<strong>Consulting</strong></span>
+        </a>
+        <p>Trusted accounting, taxation, company secretarial, and consulting services across South Africa.</p>
+      </div>
+      <div class="footer-cols">
+        <div>
+          <h5>Services</h5>
+          <a href="services.html#accounting">Accounting</a>
+          <a href="services.html#taxation">Taxation</a>
+          <a href="services.html#secretarial">Company Secretarial</a>
+          <a href="services.html#consulting">Business Consulting</a>
+        </div>
+        <div>
+          <h5>Company</h5>
+          <a href="about.html">About</a>
+          <a href="portal.html">Client Portal</a>
+          <a href="contact.html">Contact</a>
+        </div>
+        <div>
+          <h5>Legal</h5>
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="terms.html">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+    <div class="container footer-base">
+      <span>© <span id="year"></span> Murrey Consulting. All rights reserved.</span>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/chatbot.js"></script>
+</body>
+</html>
