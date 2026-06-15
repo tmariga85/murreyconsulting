@@ -5,6 +5,11 @@
   <url><loc>https://www.murreyconsulting.co.za/about.html</loc><priority>0.8</priority></url>
   <url><loc>https://www.murreyconsulting.co.za/portal.html</loc><priority>0.8</priority></url>
   <url><loc>https://www.murreyconsulting.co.za/contact.html</loc><priority>0.8</priority></url>
+  <url><loc>https://www.murreyconsulting.co.za/insights.html</loc><priority>0.7</priority></url>
+  <url><loc>https://www.murreyconsulting.co.za/insight-provisional-tax.html</loc><priority>0.6</priority></url>
+  <url><loc>https://www.murreyconsulting.co.za/insight-register-company-cipc.html</loc><priority>0.6</priority></url>
+  <url><loc>https://www.murreyconsulting.co.za/insight-vat-registration.html</loc><priority>0.6</priority></url>
+  <url><loc>https://www.murreyconsulting.co.za/insight-small-business-tax.html</loc><priority>0.6</priority></url>
   <url><loc>https://www.murreyconsulting.co.za/privacy.html</loc><priority>0.3</priority></url>
   <url><loc>https://www.murreyconsulting.co.za/terms.html</loc><priority>0.3</priority></url>
 </urlset>
