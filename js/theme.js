@@ -1,10 +1,10 @@
 /* ===== Dark / light theme (runs early to avoid flash; injects nav toggle) ===== */
 (function () {
   'use strict';
-  // 1) Apply saved/preferred theme immediately (this script is in <head>)
+  // 1) Apply saved theme immediately (this script is in <head>).
+  //    Default is ALWAYS light; only go dark if the user explicitly chose it before.
   try {
-    var saved = localStorage.getItem('mc-theme');
-    if (saved === 'dark' || (saved === null && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    if (localStorage.getItem('mc-theme') === 'dark') {
       document.documentElement.setAttribute('data-theme', 'dark');
     }
   } catch (e) {}
