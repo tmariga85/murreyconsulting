@@ -1,3 +1,4 @@
 User-agent: *
 Allow: /
+Disallow: /invoice-generator.html
 Sitemap: https://www.murreyconsulting.co.za/sitemap.xml
