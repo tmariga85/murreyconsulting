@@ -815,3 +815,15 @@ html { scroll-behavior: smooth; }
 .podcast audio { border-radius: 10px; }
 [data-theme="dark"] .podcast { background: var(--card); }
 @media (max-width: 620px) { .podcast { flex-direction: column; gap: 1rem; padding: 1.6rem; } }
+
+/* ============================================================
+   Revision 9: animated Mission (target) & Vision (telescope) icons
+   ============================================================ */
+.mv-target svg, .mv-scope svg { transform-box: fill-box; transform-origin: center; }
+.mv-target svg { animation: mvPulse 3.2s var(--ease) infinite; }
+@keyframes mvPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+.mv-scope svg { animation: mvSway 4.5s var(--ease) infinite; }
+@keyframes mvSway { 0% { transform: rotate(-8deg); } 50% { transform: rotate(8deg); } 100% { transform: rotate(-8deg); } }
+.mv-card:hover .mv-target svg { animation-duration: 1s; }
+.mv-card:hover .mv-scope svg { animation-duration: 1.4s; }
+@media (prefers-reduced-motion: reduce) { .mv-target svg, .mv-scope svg { animation: none; } }
