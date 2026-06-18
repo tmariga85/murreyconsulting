@@ -29,7 +29,7 @@
     {
       id: 'vat_register',
       kw: ['register for vat', 'vat registration', 'register vat', 'vat threshold', 'must i register for vat', 'do i need vat'],
-      a: "VAT registration is compulsory once your taxable turnover exceeds R2.3 million in any 12-month period (the threshold increased from R1 million on 1 April 2026), and voluntary once you exceed R50,000. We handle the SARS application, set up your reporting category, and keep your VAT201 filings compliant."
+      a: "VAT registration is compulsory once your taxable turnover exceeds R2.3 million in any 12-month period (the threshold increased from R1 million on 1 April 2026), and voluntary if your taxable supplies have exceeded R120,000 in the past 12 months. We handle the SARS application, set up your reporting category, and keep your VAT201 filings compliant."
     },
     {
       id: 'vat_returns',
