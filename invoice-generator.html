@@ -1,0 +1,1617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow" />
+<title>Invoice Generator — Murrey Consulting</title>
+<style>
+  :root {
+    --green: #2d7a2d;
+    --lime: #6dc12e;
+    --lime-light: #f0fae6;
+    --dark: #1a2e1a;
+    --gray: #6b7280;
+    --gray-light: #f3f4f6;
+    --border: #e5e7eb;
+    --red: #dc2626;
+    --blue: #2563eb;
+    --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: #f8faf8; color: #1f2937; font-size: 14px; }
+
+  /* ── LAYOUT ── */
+  .app-header {
+    background: var(--dark);
+    color: white;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .app-header img { height: 36px; }
+  .app-header h1 { font-size: 16px; font-weight: 600; letter-spacing: .3px; }
+  .app-header .divider { width: 1px; height: 24px; background: #ffffff30; }
+  .app-header .subtitle { font-size: 12px; color: #9ca3af; }
+
+  .tabs-bar {
+    background: white;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    padding: 0 24px;
+    gap: 0;
+  }
+  .tab {
+    padding: 14px 20px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--gray);
+    border-bottom: 2px solid transparent;
+    transition: color .15s, border-color .15s;
+  }
+  .tab:hover { color: var(--green); }
+  .tab.active { color: var(--green); border-bottom-color: var(--lime); }
+
+  .main { padding: 24px; max-width: 1100px; margin: 0 auto; }
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ── CARDS ── */
+  .card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-header h2 { font-size: 15px; font-weight: 600; }
+  .card-body { padding: 20px; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    padding: 8px 16px;
+    border-radius: 7px;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: opacity .15s, transform .1s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn:hover { opacity: .88; }
+  .btn:active { transform: scale(.98); }
+  .btn-primary { background: var(--green); color: white; }
+  .btn-lime { background: var(--lime); color: white; }
+  .btn-outline { background: white; border: 1px solid var(--border); color: #374151; }
+  .btn-danger { background: #fee2e2; color: var(--red); border: 1px solid #fecaca; }
+  .btn-sm { padding: 5px 10px; font-size: 12px; }
+  .btn-icon { padding: 6px; border-radius: 6px; background: var(--gray-light); border: none; cursor: pointer; }
+
+  /* ── FORMS ── */
+  .form-row { display: grid; gap: 16px; margin-bottom: 16px; }
+  .form-row.cols-2 { grid-template-columns: 1fr 1fr; }
+  .form-row.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .form-row.cols-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+  label { display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 5px; }
+  input, select, textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    font-size: 13px;
+    font-family: var(--font);
+    color: #1f2937;
+    transition: border-color .15s;
+    background: white;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--lime);
+    box-shadow: 0 0 0 3px #6dc12e20;
+  }
+  textarea { resize: vertical; min-height: 60px; }
+
+  /* ── TABLE ── */
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    text-align: left;
+    padding: 10px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: var(--gray);
+    background: var(--gray-light);
+    border-bottom: 1px solid var(--border);
+  }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 13px; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--lime-light); }
+  .status-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .status-draft { background: #f3f4f6; color: #6b7280; }
+  .status-sent { background: #dbeafe; color: #1d4ed8; }
+  .status-paid { background: #dcfce7; color: #16a34a; }
+  .status-partial { background: #fef9c3; color: #a16207; }
+  .status-overdue { background: #fee2e2; color: #dc2626; }
+
+  /* ── INVOICE FORM ── */
+  .line-items-table th, .line-items-table td { padding: 8px; }
+  .line-items-table td:last-child { text-align: right; }
+  .line-items-table input { margin: 0; }
+  .totals-section { margin-top: 20px; display: flex; justify-content: flex-end; }
+  .totals-grid { width: 280px; }
+  .totals-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border);
+  }
+  .totals-row.total {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--dark);
+    border-bottom: none;
+    padding-top: 10px;
+  }
+  .totals-row .label { color: var(--gray); }
+
+  .amount-credit { color: #16a34a; font-weight: 600; }
+  .amount-debit { color: #374151; }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    padding: 48px;
+    text-align: center;
+    color: var(--gray);
+  }
+  .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+  .empty-state p { font-size: 14px; }
+
+  /* ── STATEMENT ── */
+  .stmt-selector { margin-bottom: 20px; display: flex; gap: 12px; align-items: flex-end; }
+  .stmt-selector > div { flex: 1; }
+  .stmt-summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .summary-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+  }
+  .summary-card .slabel { font-size: 11px; font-weight: 700; color: var(--gray); text-transform: uppercase; margin-bottom: 4px; }
+  .summary-card .svalue { font-size: 18px; font-weight: 700; }
+  .summary-card.highlight { border-color: var(--lime); background: var(--lime-light); }
+  .summary-card.highlight .svalue { color: var(--green); }
+  .summary-card.danger .svalue { color: var(--red); }
+
+  /* ── PRINT STYLES ── */
+  @media print {
+    body { background: white; font-size: 12px; }
+    .app-header, .tabs-bar, .no-print, .card-header button { display: none !important; }
+    .main { padding: 0; max-width: none; }
+    .card { border: none; box-shadow: none; }
+    .card-body { padding: 0; }
+    .print-doc { display: block !important; }
+    .view { display: block !important; }
+    .views-wrap > .view:not(.print-target) { display: none !important; }
+    @page { margin: 15mm; }
+  }
+
+  /* ── PRINT DOCUMENT ── */
+  .print-doc { display: none; }
+  .inv-doc {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 32px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .inv-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; }
+  .inv-header img { height: 56px; }
+  .inv-meta { text-align: right; }
+  .inv-meta .inv-number { font-size: 22px; font-weight: 800; color: var(--green); }
+  .inv-meta .inv-type { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--gray); }
+  .inv-meta .inv-date { font-size: 12px; color: var(--gray); margin-top: 4px; }
+  .inv-parties { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 28px; }
+  .inv-from, .inv-to { font-size: 12px; line-height: 1.7; }
+  .inv-from strong, .inv-to strong { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: var(--gray); margin-bottom: 4px; }
+  .inv-from .company { font-size: 15px; font-weight: 700; color: var(--dark); }
+  .inv-to .client-name { font-size: 14px; font-weight: 700; color: var(--dark); }
+  .inv-line-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+  .inv-line-table th {
+    background: var(--dark);
+    color: white;
+    padding: 8px 12px;
+    text-align: left;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+  .inv-line-table th:last-child { text-align: right; }
+  .inv-line-table td { padding: 9px 12px; border-bottom: 1px solid var(--border); font-size: 12px; }
+  .inv-line-table td:last-child { text-align: right; font-weight: 600; }
+  .inv-line-table tr:last-child td { border-bottom: none; }
+  .inv-totals { margin-left: auto; width: 240px; font-size: 12px; }
+  .inv-totals-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid var(--border); }
+  .inv-totals-row:last-child { font-size: 14px; font-weight: 800; border-bottom: none; padding-top: 8px; color: var(--dark); }
+  .inv-totals-row .tlabel { color: var(--gray); }
+  .inv-notes { margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 11px; color: var(--gray); }
+  .inv-notes strong { color: var(--dark); display: block; margin-bottom: 4px; }
+  .inv-banking { margin-top: 16px; padding: 12px; background: var(--lime-light); border-radius: 7px; font-size: 11px; }
+  .inv-banking strong { color: var(--green); display: block; margin-bottom: 4px; }
+  .inv-footer { margin-top: 24px; text-align: center; font-size: 10px; color: var(--gray); padding-top: 12px; border-top: 1px solid var(--border); }
+  .inv-accent-bar { height: 4px; background: linear-gradient(90deg, var(--green), var(--lime)); border-radius: 2px; margin-bottom: 28px; }
+
+  /* STMT DOC */
+  .stmt-period { font-size: 11px; color: var(--gray); }
+  .stmt-line-table .credit { color: #16a34a; font-weight: 600; }
+  .stmt-line-table .balance-col { font-weight: 700; }
+  .stmt-line-table tr.payment-row td { background: #f0fdf4; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .mt-4 { margin-top: 16px; }
+  .mt-6 { margin-top: 24px; }
+  .text-right { text-align: right; }
+  .text-gray { color: var(--gray); }
+  .font-bold { font-weight: 700; }
+  .text-green { color: var(--green); }
+  .text-red { color: var(--red); }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <img src="assets/logo.png" alt="Murrey Consulting" onerror="this.style.display='none'">
+  <div class="divider"></div>
+  <div>
+    <h1>Invoice Generator</h1>
+    <div class="subtitle">Murrey Consulting (Pty) Ltd</div>
+  </div>
+</header>
+
+<nav class="tabs-bar no-print">
+  <div class="tab active" onclick="showView('invoices')">Invoices</div>
+  <div class="tab" onclick="showView('new-invoice')">+ New Invoice</div>
+  <div class="tab" onclick="showView('clients')">Clients</div>
+  <div class="tab" onclick="showView('payments')">Payments</div>
+  <div class="tab" onclick="showView('statements')">Statements</div>
+  <div class="tab" onclick="showView('backup')">⬇ Backup</div>
+</nav>
+
+<div class="main views-wrap">
+
+  <!-- ═══════════════ INVOICES LIST ═══════════════ -->
+  <div class="view active" id="view-invoices">
+    <div class="card">
+      <div class="card-header">
+        <h2>All Invoices</h2>
+        <button class="btn btn-primary" onclick="showView('new-invoice')">+ New Invoice</button>
+      </div>
+      <div id="invoices-table-wrap">
+        <div class="empty-state"><div class="icon">🧾</div><p>No invoices yet. Create your first invoice above.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ NEW / EDIT INVOICE ═══════════════ -->
+  <div class="view" id="view-new-invoice">
+    <div class="card">
+      <div class="card-header">
+        <h2 id="invoice-form-title">New Invoice</h2>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-outline" onclick="showView('invoices')">Cancel</button>
+          <button class="btn btn-primary" onclick="saveInvoice()">Save Invoice</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <input type="hidden" id="edit-invoice-id">
+
+        <div class="form-row cols-3">
+          <div>
+            <label>Client *</label>
+            <select id="inv-client">
+              <option value="">— Select client —</option>
+            </select>
+          </div>
+          <div>
+            <label>Invoice Date *</label>
+            <input type="date" id="inv-date">
+          </div>
+          <div>
+            <label>Due Date</label>
+            <input type="date" id="inv-due">
+          </div>
+        </div>
+
+        <div class="form-row cols-2">
+          <div>
+            <label>Reference / Description</label>
+            <input type="text" id="inv-ref" placeholder="e.g. Monthly accounting — June 2026">
+          </div>
+          <div>
+            <label>Status</label>
+            <select id="inv-status">
+              <option value="draft">Draft</option>
+              <option value="sent">Sent</option>
+              <option value="paid">Paid</option>
+              <option value="partial">Partial</option>
+              <option value="overdue">Overdue</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Line Items -->
+        <h3 style="font-size:13px;font-weight:700;color:#374151;margin-bottom:10px;margin-top:8px;">Line Items</h3>
+        <table class="line-items-table" style="width:100%;border-collapse:collapse;">
+          <thead>
+            <tr style="background:var(--gray-light);">
+              <th style="padding:8px;text-align:left;font-size:11px;font-weight:700;color:var(--gray);">Description</th>
+              <th style="padding:8px;text-align:right;font-size:11px;font-weight:700;color:var(--gray);width:80px;">Qty</th>
+              <th style="padding:8px;text-align:right;font-size:11px;font-weight:700;color:var(--gray);width:120px;">Unit Price (R)</th>
+              <th style="padding:8px;text-align:right;font-size:11px;font-weight:700;color:var(--gray);width:120px;">Amount (R)</th>
+              <th style="padding:8px;width:40px;"></th>
+            </tr>
+          </thead>
+          <tbody id="line-items-body">
+          </tbody>
+        </table>
+        <button class="btn btn-outline btn-sm mt-4" onclick="addLineItem()" style="margin-top:10px;">+ Add Line</button>
+
+        <div class="form-row cols-2 mt-6" style="margin-top:20px;">
+          <div>
+            <label>VAT Rate</label>
+            <select id="inv-vat-rate" onchange="recalcTotals()">
+              <option value="0">No VAT (0%)</option>
+              <option value="15" selected>15% VAT</option>
+            </select>
+          </div>
+          <div>
+            <label>Notes (optional)</label>
+            <textarea id="inv-notes" placeholder="Payment terms, additional info..."></textarea>
+          </div>
+        </div>
+
+        <div class="totals-section">
+          <div class="totals-grid">
+            <div class="totals-row"><span class="label">Subtotal</span><span id="total-subtotal">R 0.00</span></div>
+            <div class="totals-row"><span class="label" id="vat-label">VAT (15%)</span><span id="total-vat">R 0.00</span></div>
+            <div class="totals-row total"><span>Total Due</span><span id="total-due">R 0.00</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ CLIENTS ═══════════════ -->
+  <div class="view" id="view-clients">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><h2>Add Client</h2></div>
+        <div class="card-body">
+          <input type="hidden" id="edit-client-id">
+          <div class="form-row"><div><label>Client / Company Name *</label><input type="text" id="cl-name" placeholder="Acme (Pty) Ltd"></div></div>
+          <div class="form-row cols-2">
+            <div><label>Contact Person</label><input type="text" id="cl-contact" placeholder="John Smith"></div>
+            <div><label>Email</label><input type="email" id="cl-email" placeholder="john@acme.co.za"></div>
+          </div>
+          <div class="form-row cols-2">
+            <div><label>Phone</label><input type="tel" id="cl-phone"></div>
+            <div><label>VAT Number</label><input type="text" id="cl-vat" placeholder="4xxxxxxxxxx"></div>
+          </div>
+          <div class="form-row"><div><label>Address</label><textarea id="cl-address" placeholder="123 Main Street&#10;Johannesburg, 2000"></textarea></div></div>
+          <div style="display:flex;gap:8px;margin-top:4px;">
+            <button class="btn btn-primary" onclick="saveClient()">Save Client</button>
+            <button class="btn btn-outline" onclick="clearClientForm()">Clear</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h2>Clients</h2></div>
+        <div id="clients-list-wrap">
+          <div class="empty-state"><div class="icon">👥</div><p>No clients yet.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ PAYMENTS ═══════════════ -->
+  <div class="view" id="view-payments">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><h2>Record Payment</h2></div>
+        <div class="card-body">
+          <div class="form-row">
+            <div>
+              <label>Client *</label>
+              <select id="pay-client" onchange="loadClientInvoices()">
+                <option value="">— Select client —</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div>
+              <label>Invoice (optional)</label>
+              <select id="pay-invoice">
+                <option value="">— Unallocated / General —</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row cols-2">
+            <div><label>Payment Date *</label><input type="date" id="pay-date"></div>
+            <div><label>Amount Received (R) *</label><input type="number" id="pay-amount" min="0" step="0.01" placeholder="0.00"></div>
+          </div>
+          <div class="form-row cols-2">
+            <div>
+              <label>Payment Method</label>
+              <select id="pay-method">
+                <option>EFT</option>
+                <option>Cash</option>
+                <option>Credit Card</option>
+                <option>Cheque</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div><label>Reference</label><input type="text" id="pay-ref" placeholder="Bank ref / receipt no."></div>
+          </div>
+          <div class="form-row"><div><label>Notes</label><textarea id="pay-notes" placeholder="Additional notes..."></textarea></div></div>
+          <button class="btn btn-primary" onclick="savePayment()">Record Payment</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h2>Payment History</h2></div>
+        <div id="payments-list-wrap">
+          <div class="empty-state"><div class="icon">💳</div><p>No payments recorded yet.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ STATEMENTS ═══════════════ -->
+  <div class="view" id="view-statements">
+    <div class="card no-print" style="margin-bottom:20px;">
+      <div class="card-body" style="padding:16px 20px;">
+        <div class="stmt-selector">
+          <div>
+            <label>Client</label>
+            <select id="stmt-client" onchange="generateStatement()">
+              <option value="">— Select client —</option>
+            </select>
+          </div>
+          <div>
+            <label>From Date</label>
+            <input type="date" id="stmt-from" onchange="generateStatement()">
+          </div>
+          <div>
+            <label>To Date</label>
+            <input type="date" id="stmt-to" onchange="generateStatement()">
+          </div>
+          <button class="btn btn-lime" onclick="printStatement()">🖨 Print Statement</button>
+        </div>
+      </div>
+    </div>
+    <div id="statement-output">
+      <div class="empty-state card" style="padding:48px;"><div class="icon">📋</div><p>Select a client above to generate a statement.</p></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ BACKUP & SYNC ═══════════════ -->
+  <div class="view" id="view-backup">
+
+    <!-- JSON Export / Import -->
+    <div class="grid-2" style="margin-bottom:20px;">
+      <div class="card">
+        <div class="card-header"><h2>⬇ Download Backup</h2></div>
+        <div class="card-body">
+          <p style="font-size:13px;color:var(--gray);margin-bottom:16px;">Export all your invoices, clients and payments as a single JSON file you can store safely and restore from at any time.</p>
+          <div id="backup-stats" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;"></div>
+          <button class="btn btn-primary" onclick="exportJSON()" style="width:100%;">⬇ Download backup.json</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h2>⬆ Restore from Backup</h2></div>
+        <div class="card-body">
+          <p style="font-size:13px;color:var(--gray);margin-bottom:16px;">Upload a previously downloaded <code>backup.json</code> file to restore your data. <strong>This will overwrite all current data.</strong></p>
+          <div id="restore-drop" onclick="document.getElementById('restore-file').click()"
+            style="border:2px dashed var(--border);border-radius:8px;padding:28px;text-align:center;cursor:pointer;transition:border-color .15s;margin-bottom:12px;"
+            ondragover="event.preventDefault();this.style.borderColor='var(--lime)'"
+            ondragleave="this.style.borderColor='var(--border)'"
+            ondrop="handleDrop(event)">
+            <div style="font-size:24px;margin-bottom:8px;">📂</div>
+            <div style="font-size:13px;color:var(--gray);">Click to choose file or drag &amp; drop</div>
+          </div>
+          <input type="file" id="restore-file" accept=".json" style="display:none;" onchange="importJSON(this)">
+          <div id="restore-msg"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Google Sheets -->
+    <div class="card">
+      <div class="card-header">
+        <h2>📊 Save to Google Sheets</h2>
+        <div id="gs-status-badge" style="font-size:12px;padding:4px 10px;border-radius:20px;background:var(--gray-light);color:var(--gray);">Not connected</div>
+      </div>
+      <div class="card-body">
+
+        <!-- Setup instructions -->
+        <div id="gs-setup-section">
+          <div style="background:var(--lime-light);border:1px solid #c3e6a0;border-radius:8px;padding:16px;margin-bottom:20px;font-size:12px;line-height:1.7;">
+            <strong style="display:block;margin-bottom:6px;color:var(--green);">One-time Google Cloud setup (5 minutes)</strong>
+            1. Go to <strong>console.cloud.google.com</strong> → Create a new project (e.g. "Murrey Invoices")<br>
+            2. Enable the <strong>Google Sheets API</strong> (APIs &amp; Services → Library)<br>
+            3. Create credentials: <strong>OAuth 2.0 Client ID</strong> → Web application<br>
+            4. Under "Authorised JavaScript origins" add: <code>http://localhost:4321</code> and your live URL if applicable<br>
+            5. Copy the <strong>Client ID</strong> and paste it below
+          </div>
+          <div class="form-row cols-2">
+            <div>
+              <label>Google OAuth Client ID</label>
+              <input type="text" id="gs-client-id" placeholder="xxxxxxxxxx.apps.googleusercontent.com" value="">
+            </div>
+            <div>
+              <label>Spreadsheet Name</label>
+              <input type="text" id="gs-sheet-name" value="Murrey Consulting — Invoices">
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="gsSaveClientId()">Save &amp; Connect Google</button>
+            <button class="btn btn-outline" onclick="gsDisconnect()" id="gs-disconnect-btn" style="display:none;">Disconnect</button>
+          </div>
+        </div>
+
+        <!-- Connected state -->
+        <div id="gs-connected-section" style="display:none;">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;">
+            <div style="border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;">
+              <div style="font-size:22px;margin-bottom:4px;">🧾</div>
+              <div style="font-size:11px;color:var(--gray);font-weight:700;text-transform:uppercase;">Invoices</div>
+              <div id="gs-inv-count" style="font-size:18px;font-weight:800;">0</div>
+            </div>
+            <div style="border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;">
+              <div style="font-size:22px;margin-bottom:4px;">👥</div>
+              <div style="font-size:11px;color:var(--gray);font-weight:700;text-transform:uppercase;">Clients</div>
+              <div id="gs-cl-count" style="font-size:18px;font-weight:800;">0</div>
+            </div>
+            <div style="border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;">
+              <div style="font-size:22px;margin-bottom:4px;">💳</div>
+              <div style="font-size:11px;color:var(--gray);font-weight:700;text-transform:uppercase;">Payments</div>
+              <div id="gs-py-count" style="font-size:18px;font-weight:800;">0</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+            <button class="btn btn-lime" onclick="gsSyncToSheet()" id="gs-sync-btn">📊 Sync to Google Sheets</button>
+            <button class="btn btn-outline" onclick="gsDisconnect()">Disconnect</button>
+            <span id="gs-last-sync" style="font-size:12px;color:var(--gray);"></span>
+          </div>
+          <div id="gs-sync-log" style="margin-top:14px;font-size:12px;color:var(--gray);min-height:20px;"></div>
+          <div id="gs-sheet-link" style="margin-top:10px;display:none;">
+            <a id="gs-sheet-url" href="#" target="_blank" style="color:var(--green);font-size:13px;font-weight:600;">📄 Open Spreadsheet →</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ PRINT VIEWS (hidden until print) ═══════════════ -->
+  <div id="print-area" style="display:none;"></div>
+
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+//  DATA LAYER  —  localStorage persistence
+// ══════════════════════════════════════════════
+
+const DB = {
+  get(key) { try { return JSON.parse(localStorage.getItem('mc_' + key) || 'null'); } catch { return null; } },
+  set(key, val) { localStorage.setItem('mc_' + key, JSON.stringify(val)); },
+  clients()  { return this.get('clients')  || []; },
+  invoices() { return this.get('invoices') || []; },
+  payments() { return this.get('payments') || []; },
+  nextInvNum() {
+    const n = (this.get('inv_counter') || 0) + 1;
+    this.set('inv_counter', n);
+    return 'MC-' + String(n).padStart(4, '0');
+  }
+};
+
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+function fmt(n) { return 'R ' + Number(n || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+function fmtDate(d) { if (!d) return ''; const [y,m,day] = d.split('-'); return `${day}/${m}/${y}`; }
+function today() { return new Date().toISOString().split('T')[0]; }
+function clientName(id) { return (DB.clients().find(c => c.id === id) || {}).name || '—'; }
+function invoiceLabel(id) { const inv = DB.invoices().find(i => i.id === id); return inv ? inv.number : ''; }
+
+// ══════════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════════
+
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  const viewEl = document.getElementById('view-' + name);
+  if (viewEl) viewEl.classList.add('active');
+  const tabs = { invoices: 0, 'new-invoice': 1, clients: 2, payments: 3, statements: 4, backup: 5 };
+  const tabEls = document.querySelectorAll('.tab');
+  if (tabs[name] !== undefined && tabEls[tabs[name]]) tabEls[tabs[name]].classList.add('active');
+  if (name === 'invoices') renderInvoicesList();
+  if (name === 'new-invoice') initInvoiceForm();
+  if (name === 'clients') renderClientsList();
+  if (name === 'payments') { renderPaymentsList(); populateClientDropdowns(); }
+  if (name === 'statements') populateClientDropdowns();
+  if (name === 'backup') initBackupTab();
+}
+
+// ══════════════════════════════════════════════
+//  CLIENTS
+// ══════════════════════════════════════════════
+
+function saveClient() {
+  const name = document.getElementById('cl-name').value.trim();
+  if (!name) { alert('Client name is required.'); return; }
+  const clients = DB.clients();
+  const editId = document.getElementById('edit-client-id').value;
+  const client = {
+    id: editId || uid(),
+    name,
+    contact: document.getElementById('cl-contact').value.trim(),
+    email: document.getElementById('cl-email').value.trim(),
+    phone: document.getElementById('cl-phone').value.trim(),
+    vat: document.getElementById('cl-vat').value.trim(),
+    address: document.getElementById('cl-address').value.trim(),
+  };
+  if (editId) {
+    const idx = clients.findIndex(c => c.id === editId);
+    if (idx >= 0) clients[idx] = client;
+  } else {
+    clients.push(client);
+  }
+  DB.set('clients', clients);
+  clearClientForm();
+  renderClientsList();
+  populateClientDropdowns();
+}
+
+function clearClientForm() {
+  ['cl-name','cl-contact','cl-email','cl-phone','cl-vat','cl-address'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('edit-client-id').value = '';
+}
+
+function editClient(id) {
+  const c = DB.clients().find(cl => cl.id === id);
+  if (!c) return;
+  document.getElementById('edit-client-id').value = c.id;
+  document.getElementById('cl-name').value = c.name;
+  document.getElementById('cl-contact').value = c.contact || '';
+  document.getElementById('cl-email').value = c.email || '';
+  document.getElementById('cl-phone').value = c.phone || '';
+  document.getElementById('cl-vat').value = c.vat || '';
+  document.getElementById('cl-address').value = c.address || '';
+}
+
+function deleteClient(id) {
+  if (!confirm('Delete this client? Their invoices and payments will remain.')) return;
+  DB.set('clients', DB.clients().filter(c => c.id !== id));
+  renderClientsList();
+  populateClientDropdowns();
+}
+
+function renderClientsList() {
+  const clients = DB.clients();
+  const wrap = document.getElementById('clients-list-wrap');
+  if (!clients.length) { wrap.innerHTML = '<div class="empty-state"><div class="icon">👥</div><p>No clients yet.</p></div>'; return; }
+  wrap.innerHTML = `<table><thead><tr><th>Name</th><th>Contact</th><th>Email</th><th></th></tr></thead><tbody>
+    ${clients.map(c => `<tr>
+      <td><strong>${c.name}</strong></td>
+      <td>${c.contact || '—'}</td>
+      <td>${c.email || '—'}</td>
+      <td style="text-align:right;white-space:nowrap;">
+        <button class="btn btn-outline btn-sm" onclick="editClient('${c.id}')">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteClient('${c.id}')">Del</button>
+      </td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+function populateClientDropdowns() {
+  const clients = DB.clients();
+  const opts = '<option value="">— Select client —</option>' + clients.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+  ['inv-client','pay-client','stmt-client'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { const val = el.value; el.innerHTML = opts; el.value = val; }
+  });
+}
+
+// ══════════════════════════════════════════════
+//  LINE ITEMS
+// ══════════════════════════════════════════════
+
+let lineItems = [];
+
+function addLineItem(desc='', qty=1, price=0) {
+  const id = uid();
+  lineItems.push({ id, desc, qty, price });
+  renderLineItems();
+}
+
+function removeLineItem(id) {
+  lineItems = lineItems.filter(l => l.id !== id);
+  renderLineItems();
+}
+
+function renderLineItems() {
+  const body = document.getElementById('line-items-body');
+  if (!lineItems.length) {
+    body.innerHTML = `<tr><td colspan="5" style="color:var(--gray);padding:16px;text-align:center;font-size:12px;">No line items yet.</td></tr>`;
+    recalcTotals(); return;
+  }
+  body.innerHTML = lineItems.map(item => `
+    <tr>
+      <td><input type="text" value="${item.desc}" placeholder="Description of service/goods" oninput="updateLine('${item.id}','desc',this.value)"></td>
+      <td><input type="number" value="${item.qty}" min="0" step="0.01" style="text-align:right;" oninput="updateLine('${item.id}','qty',this.value)"></td>
+      <td><input type="number" value="${item.price}" min="0" step="0.01" style="text-align:right;" oninput="updateLine('${item.id}','price',this.value)"></td>
+      <td style="text-align:right;font-weight:600;">${fmt(item.qty * item.price)}</td>
+      <td><button class="btn-icon" onclick="removeLineItem('${item.id}')" title="Remove">✕</button></td>
+    </tr>`).join('');
+  recalcTotals();
+}
+
+function updateLine(id, field, value) {
+  const item = lineItems.find(l => l.id === id);
+  if (!item) return;
+  item[field] = field === 'desc' ? value : parseFloat(value) || 0;
+  const row = document.querySelector(`tr[data-lid="${id}"]`);
+  recalcTotals();
+  // update amount cell live
+  const rows = document.querySelectorAll('#line-items-body tr');
+  rows.forEach(r => {
+    const inputs = r.querySelectorAll('input');
+    if (inputs[0] && inputs[0].oninput) {} // already bound
+  });
+}
+
+function recalcTotals() {
+  const subtotal = lineItems.reduce((s, l) => s + (l.qty * l.price), 0);
+  const vatRate = parseInt(document.getElementById('inv-vat-rate').value) / 100;
+  const vat = subtotal * vatRate;
+  const total = subtotal + vat;
+  document.getElementById('total-subtotal').textContent = fmt(subtotal);
+  document.getElementById('total-vat').textContent = fmt(vat);
+  document.getElementById('total-due').textContent = fmt(total);
+  document.getElementById('vat-label').textContent = `VAT (${parseInt(document.getElementById('inv-vat-rate').value)}%)`;
+  // also update line amounts
+  const rows = document.querySelectorAll('#line-items-body tr');
+  rows.forEach((row, i) => {
+    if (lineItems[i]) {
+      const amtCell = row.querySelectorAll('td')[3];
+      if (amtCell) amtCell.textContent = fmt(lineItems[i].qty * lineItems[i].price);
+    }
+  });
+}
+
+// ══════════════════════════════════════════════
+//  INVOICES
+// ══════════════════════════════════════════════
+
+function initInvoiceForm(invoice) {
+  document.getElementById('invoice-form-title').textContent = invoice ? `Edit Invoice ${invoice.number}` : 'New Invoice';
+  document.getElementById('edit-invoice-id').value = invoice ? invoice.id : '';
+  document.getElementById('inv-client').value = invoice ? invoice.clientId : '';
+  document.getElementById('inv-date').value = invoice ? invoice.date : today();
+  document.getElementById('inv-due').value = invoice ? invoice.due : '';
+  document.getElementById('inv-ref').value = invoice ? invoice.ref : '';
+  document.getElementById('inv-status').value = invoice ? invoice.status : 'draft';
+  document.getElementById('inv-vat-rate').value = invoice ? invoice.vatRate : '15';
+  document.getElementById('inv-notes').value = invoice ? invoice.notes : '';
+  lineItems = invoice ? JSON.parse(JSON.stringify(invoice.lines)) : [];
+  if (!lineItems.length) addLineItem();
+  else renderLineItems();
+  populateClientDropdowns();
+}
+
+function saveInvoice() {
+  const clientId = document.getElementById('inv-client').value;
+  const date = document.getElementById('inv-date').value;
+  if (!clientId) { alert('Please select a client.'); return; }
+  if (!date) { alert('Please enter an invoice date.'); return; }
+  if (!lineItems.length || lineItems.every(l => !l.desc)) { alert('Please add at least one line item.'); return; }
+
+  const subtotal = lineItems.reduce((s, l) => s + (l.qty * l.price), 0);
+  const vatRate = parseInt(document.getElementById('inv-vat-rate').value);
+  const vat = subtotal * vatRate / 100;
+  const total = subtotal + vat;
+
+  const invoices = DB.invoices();
+  const editId = document.getElementById('edit-invoice-id').value;
+  const invoice = {
+    id: editId || uid(),
+    number: editId ? invoices.find(i => i.id === editId)?.number || DB.nextInvNum() : DB.nextInvNum(),
+    clientId,
+    date,
+    due: document.getElementById('inv-due').value,
+    ref: document.getElementById('inv-ref').value.trim(),
+    status: document.getElementById('inv-status').value,
+    vatRate,
+    notes: document.getElementById('inv-notes').value.trim(),
+    lines: JSON.parse(JSON.stringify(lineItems)),
+    subtotal, vat, total,
+    created: editId ? (invoices.find(i => i.id === editId)?.created || new Date().toISOString()) : new Date().toISOString(),
+  };
+
+  if (editId) {
+    const idx = invoices.findIndex(i => i.id === editId);
+    if (idx >= 0) invoices[idx] = invoice;
+  } else {
+    invoices.push(invoice);
+  }
+  DB.set('invoices', invoices);
+  showView('invoices');
+}
+
+function editInvoice(id) {
+  const inv = DB.invoices().find(i => i.id === id);
+  if (!inv) return;
+  showView('new-invoice');
+  setTimeout(() => initInvoiceForm(inv), 50);
+}
+
+function deleteInvoice(id) {
+  if (!confirm('Delete this invoice? This cannot be undone.')) return;
+  DB.set('invoices', DB.invoices().filter(i => i.id !== id));
+  renderInvoicesList();
+}
+
+function renderInvoicesList() {
+  const invoices = DB.invoices().sort((a,b) => b.created.localeCompare(a.created));
+  const wrap = document.getElementById('invoices-table-wrap');
+  if (!invoices.length) { wrap.innerHTML = '<div class="empty-state"><div class="icon">🧾</div><p>No invoices yet.</p></div>'; return; }
+  const statusBadge = s => `<span class="status-badge status-${s}">${s.charAt(0).toUpperCase()+s.slice(1)}</span>`;
+  wrap.innerHTML = `<table><thead><tr><th>Invoice #</th><th>Client</th><th>Date</th><th>Due</th><th>Amount</th><th>Status</th><th style="text-align:right;">Actions</th></tr></thead><tbody>
+    ${invoices.map(inv => `<tr>
+      <td><strong>${inv.number}</strong></td>
+      <td>${clientName(inv.clientId)}</td>
+      <td>${fmtDate(inv.date)}</td>
+      <td>${fmtDate(inv.due) || '—'}</td>
+      <td><strong>${fmt(inv.total)}</strong></td>
+      <td>${statusBadge(inv.status)}</td>
+      <td style="text-align:right;white-space:nowrap;">
+        <button class="btn btn-outline btn-sm" onclick="printInvoice('${inv.id}')">🖨 Print</button>
+        <button class="btn btn-outline btn-sm" onclick="editInvoice('${inv.id}')">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteInvoice('${inv.id}')">Del</button>
+      </td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+// ══════════════════════════════════════════════
+//  PAYMENTS
+// ══════════════════════════════════════════════
+
+function loadClientInvoices() {
+  const clientId = document.getElementById('pay-client').value;
+  const invoices = DB.invoices().filter(i => i.clientId === clientId && i.status !== 'paid');
+  const sel = document.getElementById('pay-invoice');
+  sel.innerHTML = '<option value="">— Unallocated / General —</option>' +
+    invoices.map(i => `<option value="${i.id}">${i.number} — ${fmt(i.total)}</option>`).join('');
+}
+
+function savePayment() {
+  const clientId = document.getElementById('pay-client').value;
+  const amount = parseFloat(document.getElementById('pay-amount').value);
+  const date = document.getElementById('pay-date').value;
+  if (!clientId) { alert('Please select a client.'); return; }
+  if (!amount || amount <= 0) { alert('Please enter a valid amount.'); return; }
+  if (!date) { alert('Please enter a payment date.'); return; }
+
+  const payments = DB.payments();
+  const invoiceId = document.getElementById('pay-invoice').value;
+  payments.push({
+    id: uid(),
+    clientId,
+    invoiceId: invoiceId || null,
+    date,
+    amount,
+    method: document.getElementById('pay-method').value,
+    ref: document.getElementById('pay-ref').value.trim(),
+    notes: document.getElementById('pay-notes').value.trim(),
+    created: new Date().toISOString(),
+  });
+  DB.set('payments', payments);
+
+  // update invoice status if allocated
+  if (invoiceId) {
+    const invoices = DB.invoices();
+    const inv = invoices.find(i => i.id === invoiceId);
+    if (inv) {
+      const paid = DB.payments().filter(p => p.invoiceId === invoiceId).reduce((s,p) => s+p.amount, 0);
+      inv.status = paid >= inv.total ? 'paid' : 'partial';
+      DB.set('invoices', invoices);
+    }
+  }
+
+  // reset form
+  ['pay-amount','pay-ref','pay-notes'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('pay-date').value = today();
+  renderPaymentsList();
+  alert('Payment recorded successfully.');
+}
+
+function deletePayment(id) {
+  if (!confirm('Delete this payment?')) return;
+  DB.set('payments', DB.payments().filter(p => p.id !== id));
+  renderPaymentsList();
+}
+
+function renderPaymentsList() {
+  const payments = DB.payments().sort((a,b) => b.date.localeCompare(a.date));
+  const wrap = document.getElementById('payments-list-wrap');
+  if (!payments.length) { wrap.innerHTML = '<div class="empty-state"><div class="icon">💳</div><p>No payments yet.</p></div>'; return; }
+  wrap.innerHTML = `<table><thead><tr><th>Date</th><th>Client</th><th>Invoice</th><th>Amount</th><th>Method</th><th></th></tr></thead><tbody>
+    ${payments.map(p => `<tr>
+      <td>${fmtDate(p.date)}</td>
+      <td>${clientName(p.clientId)}</td>
+      <td>${p.invoiceId ? invoiceLabel(p.invoiceId) : '—'}</td>
+      <td class="amount-credit">${fmt(p.amount)}</td>
+      <td>${p.method}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="deletePayment('${p.id}')">Del</button></td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+// ══════════════════════════════════════════════
+//  STATEMENTS
+// ══════════════════════════════════════════════
+
+function generateStatement() {
+  const clientId = document.getElementById('stmt-client').value;
+  if (!clientId) { document.getElementById('statement-output').innerHTML = '<div class="empty-state card" style="padding:48px;"><div class="icon">📋</div><p>Select a client above to generate a statement.</p></div>'; return; }
+
+  const client = DB.clients().find(c => c.id === clientId);
+  const fromDate = document.getElementById('stmt-from').value;
+  const toDate = document.getElementById('stmt-to').value;
+
+  const allInvoices = DB.invoices().filter(i => i.clientId === clientId);
+  const allPayments = DB.payments().filter(p => p.clientId === clientId);
+
+  // Build transaction list
+  let txns = [
+    ...allInvoices.map(i => ({ type: 'invoice', date: i.date, ref: i.number, desc: i.ref || 'Invoice', debit: i.total, credit: 0, id: i.id })),
+    ...allPayments.map(p => ({ type: 'payment', date: p.date, ref: p.ref || p.method, desc: `Payment received${p.invoiceId ? ' — ' + invoiceLabel(p.invoiceId) : ''}`, debit: 0, credit: p.amount, id: p.id })),
+  ].sort((a,b) => a.date.localeCompare(b.date) || a.type.localeCompare(b.type));
+
+  // filter by date
+  if (fromDate) txns = txns.filter(t => t.date >= fromDate);
+  if (toDate) txns = txns.filter(t => t.date <= toDate);
+
+  // running balance
+  let balance = 0;
+  txns = txns.map(t => { balance += t.debit - t.credit; return { ...t, balance }; });
+
+  const totalInvoiced = txns.filter(t => t.type === 'invoice').reduce((s,t) => s+t.debit, 0);
+  const totalPaid = txns.filter(t => t.type === 'payment').reduce((s,t) => s+t.credit, 0);
+  const outstanding = totalInvoiced - totalPaid;
+
+  const html = `
+    <div class="stmt-summary">
+      <div class="summary-card"><div class="slabel">Total Invoiced</div><div class="svalue">${fmt(totalInvoiced)}</div></div>
+      <div class="summary-card"><div class="slabel">Total Payments</div><div class="svalue text-green">${fmt(totalPaid)}</div></div>
+      <div class="summary-card ${outstanding > 0 ? 'danger' : ''}"><div class="slabel">Balance Due</div><div class="svalue ${outstanding > 0 ? 'text-red' : 'text-green'}">${fmt(outstanding)}</div></div>
+      <div class="summary-card"><div class="slabel">Transactions</div><div class="svalue">${txns.length}</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h2>Statement — ${client.name}</h2>
+        <span class="text-gray" style="font-size:12px;">${fromDate ? fmtDate(fromDate) + ' — ' : 'All dates — '}${toDate ? fmtDate(toDate) : 'present'}</span>
+      </div>
+      ${txns.length ? `
+      <table class="stmt-line-table">
+        <thead><tr><th>Date</th><th>Reference</th><th>Description</th><th style="text-align:right;">Debit (R)</th><th style="text-align:right;">Credit (R)</th><th style="text-align:right;">Balance (R)</th></tr></thead>
+        <tbody>
+          ${txns.map(t => `<tr class="${t.type === 'payment' ? 'payment-row' : ''}">
+            <td>${fmtDate(t.date)}</td>
+            <td>${t.ref || '—'}</td>
+            <td>${t.desc}</td>
+            <td style="text-align:right;">${t.debit ? fmt(t.debit) : '—'}</td>
+            <td style="text-align:right;" class="credit">${t.credit ? fmt(t.credit) : '—'}</td>
+            <td style="text-align:right;" class="balance-col ${t.balance > 0 ? 'text-red' : 'text-green'}">${fmt(t.balance)}</td>
+          </tr>`).join('')}
+          <tr style="background:var(--gray-light);font-weight:700;">
+            <td colspan="3" style="text-align:right;padding-right:12px;">Closing Balance</td>
+            <td style="text-align:right;">${fmt(totalInvoiced)}</td>
+            <td style="text-align:right;color:var(--green);">${fmt(totalPaid)}</td>
+            <td style="text-align:right;font-size:14px;${outstanding > 0 ? 'color:var(--red)' : 'color:var(--green)'};">${fmt(outstanding)}</td>
+          </tr>
+        </tbody>
+      </table>` : '<div class="empty-state"><p>No transactions found for this period.</p></div>'}
+    </div>`;
+
+  document.getElementById('statement-output').innerHTML = html;
+}
+
+// ══════════════════════════════════════════════
+//  PRINT — INVOICE
+// ══════════════════════════════════════════════
+
+const BIZ = {
+  name: 'Murrey Consulting',
+  tagline: 'Accounting · Taxation · Company Secretarial · Business Consulting',
+  address: '27A 1st Street, Abbotsford\nJohannesburg, 2192, Gauteng',
+  email: 't@murreyconsulting.co.za',
+  phone: '+27 81 357 4817',
+  bank: 'Please contact us for banking details.',
+};
+
+function printInvoice(id) {
+  const inv = DB.invoices().find(i => i.id === id);
+  if (!inv) return;
+  const client = DB.clients().find(c => c.id === inv.clientId) || {};
+
+  const linesHtml = inv.lines.map(l => `
+    <tr>
+      <td>${l.desc}</td>
+      <td style="text-align:right;">${l.qty}</td>
+      <td style="text-align:right;">${fmt(l.price)}</td>
+      <td>${fmt(l.qty * l.price)}</td>
+    </tr>`).join('');
+
+  const doc = `
+    <div class="inv-doc">
+      <div class="inv-accent-bar"></div>
+      <div class="inv-header">
+        <div>
+          <img src="assets/logo.png" alt="Murrey Consulting" style="height:56px;" onerror="this.style.display='none'">
+          <div style="margin-top:10px;font-size:11px;color:#6b7280;line-height:1.6;">
+            ${BIZ.address.replace(/\n/g,'<br>')}
+            <br>${BIZ.phone}
+            <br>${BIZ.email}
+          </div>
+        </div>
+        <div class="inv-meta">
+          <div class="inv-type">Tax Invoice</div>
+          <div class="inv-number">${inv.number}</div>
+          <div class="inv-date">Date: ${fmtDate(inv.date)}</div>
+          ${inv.due ? `<div class="inv-date">Due: ${fmtDate(inv.due)}</div>` : ''}
+          ${inv.ref ? `<div class="inv-date" style="margin-top:6px;color:#374151;">Ref: ${inv.ref}</div>` : ''}
+        </div>
+      </div>
+      <div class="inv-parties">
+        <div class="inv-from">
+          <strong>From</strong>
+          <div class="company">${BIZ.name}</div>
+          <div style="font-size:11px;color:#6b7280;margin-top:2px;">${BIZ.tagline}</div>
+        </div>
+        <div class="inv-to">
+          <strong>Bill To</strong>
+          <div class="client-name">${client.name || '—'}</div>
+          ${client.contact ? `<div>${client.contact}</div>` : ''}
+          ${client.address ? `<div>${client.address.replace(/\n/g,'<br>')}</div>` : ''}
+          ${client.email ? `<div>${client.email}</div>` : ''}
+          ${client.phone ? `<div>${client.phone}</div>` : ''}
+          ${client.vat ? `<div>VAT No: ${client.vat}</div>` : ''}
+        </div>
+      </div>
+      <table class="inv-line-table">
+        <thead><tr><th>Description</th><th style="text-align:right;width:60px;">Qty</th><th style="text-align:right;width:120px;">Unit Price</th><th style="text-align:right;width:120px;">Amount</th></tr></thead>
+        <tbody>${linesHtml}</tbody>
+      </table>
+      <div class="inv-totals">
+        <div class="inv-totals-row"><span class="tlabel">Subtotal</span><span>${fmt(inv.subtotal)}</span></div>
+        <div class="inv-totals-row"><span class="tlabel">VAT (${inv.vatRate}%)</span><span>${fmt(inv.vat)}</span></div>
+        <div class="inv-totals-row"><span>Total Due</span><span>${fmt(inv.total)}</span></div>
+      </div>
+      ${inv.notes ? `<div class="inv-notes"><strong>Notes</strong>${inv.notes}</div>` : ''}
+      <div class="inv-banking"><strong>Banking Details</strong>${BIZ.bank}</div>
+      <div class="inv-footer">${BIZ.name} — ${BIZ.tagline}<br>Thank you for your business.</div>
+    </div>`;
+
+  openPrintWindow(doc, `Invoice ${inv.number}`);
+}
+
+// ══════════════════════════════════════════════
+//  PRINT — STATEMENT
+// ══════════════════════════════════════════════
+
+function printStatement() {
+  const clientId = document.getElementById('stmt-client').value;
+  if (!clientId) { alert('Please select a client first.'); return; }
+
+  const client = DB.clients().find(c => c.id === clientId) || {};
+  const fromDate = document.getElementById('stmt-from').value;
+  const toDate = document.getElementById('stmt-to').value;
+
+  let txns = [
+    ...DB.invoices().filter(i => i.clientId === clientId).map(i => ({ type: 'invoice', date: i.date, ref: i.number, desc: i.ref || 'Invoice', debit: i.total, credit: 0 })),
+    ...DB.payments().filter(p => p.clientId === clientId).map(p => ({ type: 'payment', date: p.date, ref: p.ref || p.method, desc: `Payment received${p.invoiceId ? ' — '+invoiceLabel(p.invoiceId) : ''}`, debit: 0, credit: p.amount })),
+  ].sort((a,b) => a.date.localeCompare(b.date));
+
+  if (fromDate) txns = txns.filter(t => t.date >= fromDate);
+  if (toDate) txns = txns.filter(t => t.date <= toDate);
+
+  let balance = 0;
+  txns = txns.map(t => { balance += t.debit - t.credit; return { ...t, balance }; });
+
+  const totalInvoiced = txns.filter(t => t.type==='invoice').reduce((s,t)=>s+t.debit,0);
+  const totalPaid = txns.filter(t => t.type==='payment').reduce((s,t)=>s+t.credit,0);
+  const outstanding = totalInvoiced - totalPaid;
+  const period = (fromDate ? fmtDate(fromDate)+' to ' : 'Up to ') + (toDate ? fmtDate(toDate) : fmtDate(today()));
+
+  const doc = `
+    <div class="inv-doc">
+      <div class="inv-accent-bar"></div>
+      <div class="inv-header">
+        <div>
+          <img src="assets/logo.png" alt="Murrey Consulting" style="height:56px;" onerror="this.style.display='none'">
+          <div style="margin-top:10px;font-size:11px;color:#6b7280;line-height:1.6;">
+            ${BIZ.address.replace(/\n/g,'<br>')}
+            <br>${BIZ.phone} &nbsp;·&nbsp; ${BIZ.email}
+          </div>
+        </div>
+        <div class="inv-meta">
+          <div class="inv-type">Account Statement</div>
+          <div class="inv-number" style="font-size:16px;">${client.name}</div>
+          <div class="inv-date">Period: ${period}</div>
+          <div class="inv-date">Printed: ${fmtDate(today())}</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:24px;">
+        <div style="border:1px solid #e5e7eb;border-radius:8px;padding:12px;">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#6b7280;margin-bottom:4px;">Total Invoiced</div>
+          <div style="font-size:16px;font-weight:800;">${fmt(totalInvoiced)}</div>
+        </div>
+        <div style="border:1px solid #e5e7eb;border-radius:8px;padding:12px;">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#6b7280;margin-bottom:4px;">Total Paid</div>
+          <div style="font-size:16px;font-weight:800;color:#16a34a;">${fmt(totalPaid)}</div>
+        </div>
+        <div style="border:1px solid ${outstanding>0?'#fca5a5':'#6dc12e'};background:${outstanding>0?'#fef2f2':'#f0fae6'};border-radius:8px;padding:12px;">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#6b7280;margin-bottom:4px;">Balance Due</div>
+          <div style="font-size:16px;font-weight:800;color:${outstanding>0?'#dc2626':'#16a34a'};">${fmt(outstanding)}</div>
+        </div>
+      </div>
+
+      ${txns.length ? `
+      <table class="inv-line-table stmt-line-table" style="font-size:11px;">
+        <thead><tr><th>Date</th><th>Reference</th><th>Description</th><th style="text-align:right;">Debit</th><th style="text-align:right;">Credit</th><th style="text-align:right;">Balance</th></tr></thead>
+        <tbody>
+          ${txns.map(t => `<tr style="${t.type==='payment'?'background:#f0fdf4;':''}">
+            <td>${fmtDate(t.date)}</td>
+            <td>${t.ref||'—'}</td>
+            <td>${t.desc}</td>
+            <td style="text-align:right;">${t.debit?fmt(t.debit):'—'}</td>
+            <td style="text-align:right;color:#16a34a;font-weight:600;">${t.credit?fmt(t.credit):'—'}</td>
+            <td style="text-align:right;font-weight:700;color:${t.balance>0?'#dc2626':'#16a34a'};">${fmt(t.balance)}</td>
+          </tr>`).join('')}
+          <tr style="background:#f3f4f6;font-weight:700;font-size:12px;">
+            <td colspan="3" style="text-align:right;padding-right:12px;">Closing Balance</td>
+            <td style="text-align:right;">${fmt(totalInvoiced)}</td>
+            <td style="text-align:right;color:#16a34a;">${fmt(totalPaid)}</td>
+            <td style="text-align:right;font-size:13px;color:${outstanding>0?'#dc2626':'#16a34a'};">${fmt(outstanding)}</td>
+          </tr>
+        </tbody>
+      </table>` : '<p style="text-align:center;color:#6b7280;padding:24px;">No transactions found for this period.</p>'}
+
+      ${outstanding > 0 ? `<div class="inv-banking" style="margin-top:20px;"><strong>Payment Information</strong>${BIZ.bank}</div>` : ''}
+      <div class="inv-footer">${BIZ.name} — ${BIZ.tagline}<br>This statement was generated on ${fmtDate(today())}. Please contact us at ${BIZ.email} with any queries.</div>
+    </div>`;
+
+  openPrintWindow(doc, `Statement — ${client.name}`);
+}
+
+function openPrintWindow(bodyHtml, title) {
+  const w = window.open('', '_blank', 'width=900,height=700');
+  w.document.write(`<!DOCTYPE html><html><head>
+    <title>${title}</title>
+    <meta charset="UTF-8">
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body { font-family: 'Segoe UI', system-ui, sans-serif; background: white; color: #1f2937; padding: 20px; }
+      .inv-doc { max-width: 760px; margin: 0 auto; }
+      .inv-accent-bar { height: 4px; background: linear-gradient(90deg, #2d7a2d, #6dc12e); border-radius: 2px; margin-bottom: 28px; }
+      .inv-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; }
+      .inv-header img { height: 56px; }
+      .inv-meta { text-align: right; }
+      .inv-meta .inv-number { font-size: 22px; font-weight: 800; color: #2d7a2d; }
+      .inv-meta .inv-type { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #6b7280; }
+      .inv-meta .inv-date { font-size: 11px; color: #6b7280; margin-top: 3px; }
+      .inv-parties { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-bottom: 24px; }
+      .inv-from, .inv-to { font-size: 12px; line-height: 1.7; }
+      .inv-from strong, .inv-to strong { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: .5px; color: #6b7280; margin-bottom: 3px; }
+      .inv-from .company { font-size: 14px; font-weight: 700; color: #1a2e1a; }
+      .inv-to .client-name { font-size: 13px; font-weight: 700; color: #1a2e1a; }
+      .inv-line-table { width: 100%; border-collapse: collapse; margin-bottom: 14px; }
+      .inv-line-table th { background: #1a2e1a; color: white; padding: 7px 10px; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: .5px; }
+      .inv-line-table th:last-child { text-align: right; }
+      .inv-line-table td { padding: 8px 10px; border-bottom: 1px solid #e5e7eb; font-size: 11px; }
+      .inv-line-table td:last-child { text-align: right; font-weight: 600; }
+      .inv-totals { margin-left: auto; width: 220px; font-size: 11px; }
+      .inv-totals-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #e5e7eb; }
+      .inv-totals-row:last-child { font-size: 13px; font-weight: 800; border-bottom: none; padding-top: 8px; color: #1a2e1a; }
+      .inv-totals-row .tlabel { color: #6b7280; }
+      .inv-notes { margin-top: 24px; padding-top: 14px; border-top: 1px solid #e5e7eb; font-size: 10px; color: #6b7280; }
+      .inv-notes strong { color: #1a2e1a; display: block; margin-bottom: 3px; }
+      .inv-banking { margin-top: 14px; padding: 10px; background: #f0fae6; border-radius: 7px; font-size: 10px; }
+      .inv-banking strong { color: #2d7a2d; display: block; margin-bottom: 3px; }
+      .inv-footer { margin-top: 20px; text-align: center; font-size: 9px; color: #9ca3af; padding-top: 10px; border-top: 1px solid #e5e7eb; }
+      .stmt-line-table .credit { color: #16a34a; font-weight: 600; }
+      @media print { body { padding: 0; } @page { margin: 12mm; } }
+    </style>
+  </head><body>${bodyHtml}
+  <div style="text-align:center;margin-top:30px;" class="no-print">
+    <button onclick="window.print()" style="padding:10px 24px;background:#2d7a2d;color:white;border:none;border-radius:7px;font-size:14px;cursor:pointer;">🖨 Print / Save as PDF</button>
+  </div>
+  </body></html>`);
+  w.document.close();
+}
+
+// ══════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════
+
+document.addEventListener('DOMContentLoaded', () => {
+  populateClientDropdowns();
+  document.getElementById('inv-date').value = today();
+  const d = new Date(); d.setDate(d.getDate() + 30);
+  document.getElementById('inv-due').value = d.toISOString().split('T')[0];
+  document.getElementById('pay-date').value = today();
+  // statement defaults: current month
+  const now = new Date();
+  document.getElementById('stmt-from').value = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-01`;
+  document.getElementById('stmt-to').value = today();
+  addLineItem();
+  renderInvoicesList();
+});
+</script>
+<script src="https://apis.google.com/js/api.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script>
+// ══════════════════════════════════════════════
+//  BACKUP TAB INIT
+// ══════════════════════════════════════════════
+
+function initBackupTab() {
+  // Stats
+  const inv = DB.invoices(), cl = DB.clients(), py = DB.payments();
+  document.getElementById('backup-stats').innerHTML = `
+    <div style="border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;">
+      <div style="font-size:18px;font-weight:800;">${inv.length}</div>
+      <div style="font-size:11px;color:var(--gray);">Invoices</div>
+    </div>
+    <div style="border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;">
+      <div style="font-size:18px;font-weight:800;">${cl.length}</div>
+      <div style="font-size:11px;color:var(--gray);">Clients</div>
+    </div>
+    <div style="border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;">
+      <div style="font-size:18px;font-weight:800;">${py.length}</div>
+      <div style="font-size:11px;color:var(--gray);">Payments</div>
+    </div>`;
+
+  // Google Sheets — restore saved client ID
+  const savedId = localStorage.getItem('mc_gs_client_id') || '';
+  if (savedId) document.getElementById('gs-client-id').value = savedId;
+  const savedName = localStorage.getItem('mc_gs_sheet_name') || 'Murrey Consulting — Invoices';
+  document.getElementById('gs-sheet-name').value = savedName;
+
+  // Restore last sync info
+  const lastSync = localStorage.getItem('mc_gs_last_sync');
+  if (lastSync) document.getElementById('gs-last-sync').textContent = 'Last synced: ' + lastSync;
+
+  // Restore sheet link
+  const sheetId = localStorage.getItem('mc_gs_spreadsheet_id');
+  if (sheetId) {
+    document.getElementById('gs-sheet-link').style.display = 'block';
+    document.getElementById('gs-sheet-url').href = `https://docs.google.com/spreadsheets/d/${sheetId}`;
+  }
+
+  // Update counts
+  document.getElementById('gs-inv-count').textContent = inv.length;
+  document.getElementById('gs-cl-count').textContent = cl.length;
+  document.getElementById('gs-py-count').textContent = py.length;
+
+  // If already authenticated show connected state
+  if (gsAccessToken) showGsConnected();
+  else if (savedId) showGsSetup();
+}
+
+// ══════════════════════════════════════════════
+//  JSON EXPORT
+// ══════════════════════════════════════════════
+
+function exportJSON() {
+  const data = {
+    exported: new Date().toISOString(),
+    version: 1,
+    inv_counter: DB.get('inv_counter') || 0,
+    clients: DB.clients(),
+    invoices: DB.invoices(),
+    payments: DB.payments(),
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `murrey-consulting-backup-${new Date().toISOString().split('T')[0]}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+// ══════════════════════════════════════════════
+//  JSON IMPORT / RESTORE
+// ══════════════════════════════════════════════
+
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('restore-drop').style.borderColor = 'var(--border)';
+  const file = e.dataTransfer.files[0];
+  if (file) readBackupFile(file);
+}
+
+function importJSON(input) {
+  if (input.files[0]) readBackupFile(input.files[0]);
+}
+
+function readBackupFile(file) {
+  const msg = document.getElementById('restore-msg');
+  if (!file.name.endsWith('.json')) { msg.innerHTML = '<span style="color:var(--red);font-size:12px;">Please select a .json backup file.</span>'; return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.clients || !data.invoices) throw new Error('Invalid backup format');
+      const summary = `${data.invoices.length} invoices, ${data.clients.length} clients, ${(data.payments||[]).length} payments`;
+      if (!confirm(`Restore backup from ${data.exported ? new Date(data.exported).toLocaleDateString() : 'unknown date'}?\n\nThis will replace all current data with:\n${summary}\n\nThis cannot be undone.`)) return;
+      DB.set('clients', data.clients || []);
+      DB.set('invoices', data.invoices || []);
+      DB.set('payments', data.payments || []);
+      if (data.inv_counter) DB.set('inv_counter', data.inv_counter);
+      msg.innerHTML = `<span style="color:var(--green);font-size:12px;font-weight:600;">✓ Restored successfully — ${summary}</span>`;
+      initBackupTab();
+    } catch(err) {
+      msg.innerHTML = `<span style="color:var(--red);font-size:12px;">Error: ${err.message}</span>`;
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ══════════════════════════════════════════════
+//  GOOGLE SHEETS — AUTH
+// ══════════════════════════════════════════════
+
+let gsAccessToken = null;
+let gsTokenClient = null;
+
+const GS_SCOPES = 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive.file';
+
+function gsSaveClientId() {
+  const clientId = document.getElementById('gs-client-id').value.trim();
+  const sheetName = document.getElementById('gs-sheet-name').value.trim() || 'Murrey Consulting — Invoices';
+  if (!clientId) { alert('Please enter your Google OAuth Client ID.'); return; }
+  localStorage.setItem('mc_gs_client_id', clientId);
+  localStorage.setItem('mc_gs_sheet_name', sheetName);
+  gsInitAuth(clientId);
+}
+
+function gsInitAuth(clientId) {
+  if (!window.google || !window.google.accounts) {
+    gsLog('Google Identity Services not loaded. Check your internet connection.', 'error');
+    return;
+  }
+  gsTokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: clientId,
+    scope: GS_SCOPES,
+    callback: (response) => {
+      if (response.error) { gsLog('Auth error: ' + response.error, 'error'); return; }
+      gsAccessToken = response.access_token;
+      showGsConnected();
+      gsLog('Connected to Google. Ready to sync.', 'ok');
+    },
+  });
+  gsRequestToken();
+}
+
+function gsRequestToken() {
+  if (!gsTokenClient) {
+    const clientId = localStorage.getItem('mc_gs_client_id');
+    if (!clientId) { alert('No Client ID saved. Please enter it first.'); return; }
+    gsInitAuth(clientId);
+    return;
+  }
+  if (gsAccessToken) {
+    gsTokenClient.requestAccessToken({ prompt: '' });
+  } else {
+    gsTokenClient.requestAccessToken({ prompt: 'consent' });
+  }
+}
+
+function showGsConnected() {
+  document.getElementById('gs-setup-section').style.display = 'none';
+  document.getElementById('gs-connected-section').style.display = 'block';
+  document.getElementById('gs-status-badge').textContent = '✓ Connected';
+  document.getElementById('gs-status-badge').style.background = '#dcfce7';
+  document.getElementById('gs-status-badge').style.color = '#16a34a';
+}
+
+function showGsSetup() {
+  document.getElementById('gs-setup-section').style.display = 'block';
+  document.getElementById('gs-connected-section').style.display = 'none';
+  document.getElementById('gs-status-badge').textContent = 'Not connected';
+  document.getElementById('gs-status-badge').style.background = 'var(--gray-light)';
+  document.getElementById('gs-status-badge').style.color = 'var(--gray)';
+}
+
+function gsDisconnect() {
+  gsAccessToken = null;
+  gsTokenClient = null;
+  showGsSetup();
+  gsLog('', '');
+}
+
+function gsLog(msg, type) {
+  const el = document.getElementById('gs-sync-log');
+  if (!el) return;
+  const color = type === 'error' ? 'var(--red)' : type === 'ok' ? 'var(--green)' : 'var(--gray)';
+  el.innerHTML = msg ? `<span style="color:${color};">${msg}</span>` : '';
+}
+
+// ══════════════════════════════════════════════
+//  GOOGLE SHEETS — SYNC
+// ══════════════════════════════════════════════
+
+async function gsSyncToSheet() {
+  if (!gsAccessToken) { gsRequestToken(); return; }
+  const btn = document.getElementById('gs-sync-btn');
+  btn.disabled = true; btn.textContent = '⏳ Syncing…';
+  gsLog('Starting sync…', '');
+
+  try {
+    const sheetName = localStorage.getItem('mc_gs_sheet_name') || 'Murrey Consulting — Invoices';
+    let spreadsheetId = localStorage.getItem('mc_gs_spreadsheet_id');
+
+    if (!spreadsheetId) {
+      gsLog('Creating new spreadsheet…', '');
+      spreadsheetId = await gsCreateSpreadsheet(sheetName);
+      localStorage.setItem('mc_gs_spreadsheet_id', spreadsheetId);
+      document.getElementById('gs-sheet-link').style.display = 'block';
+      document.getElementById('gs-sheet-url').href = `https://docs.google.com/spreadsheets/d/${spreadsheetId}`;
+    }
+
+    gsLog('Writing Clients sheet…', '');
+    await gsWriteClients(spreadsheetId);
+    gsLog('Writing Invoices sheet…', '');
+    await gsWriteInvoices(spreadsheetId);
+    gsLog('Writing Payments sheet…', '');
+    await gsWritePayments(spreadsheetId);
+    gsLog('Writing Summary sheet…', '');
+    await gsWriteSummary(spreadsheetId);
+
+    const now = new Date().toLocaleString('en-ZA');
+    localStorage.setItem('mc_gs_last_sync', now);
+    document.getElementById('gs-last-sync').textContent = 'Last synced: ' + now;
+    gsLog('✓ Sync complete! All data saved to Google Sheets.', 'ok');
+  } catch(err) {
+    if (err.status === 401) {
+      gsAccessToken = null;
+      gsLog('Session expired. Click Sync again to re-authenticate.', 'error');
+    } else {
+      gsLog('Error: ' + (err.message || JSON.stringify(err)), 'error');
+    }
+  } finally {
+    btn.disabled = false; btn.textContent = '📊 Sync to Google Sheets';
+  }
+}
+
+async function gsApi(method, url, body) {
+  const res = await fetch(url, {
+    method,
+    headers: { 'Authorization': 'Bearer ' + gsAccessToken, 'Content-Type': 'application/json' },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  if (!res.ok) { const err = await res.json(); throw Object.assign(new Error(err.error?.message || 'API error'), { status: res.status }); }
+  return res.json();
+}
+
+async function gsCreateSpreadsheet(title) {
+  const res = await gsApi('POST', 'https://sheets.googleapis.com/v4/spreadsheets', {
+    properties: { title },
+    sheets: [
+      { properties: { title: 'Summary' } },
+      { properties: { title: 'Invoices' } },
+      { properties: { title: 'Clients' } },
+      { properties: { title: 'Payments' } },
+    ],
+  });
+  return res.spreadsheetId;
+}
+
+async function gsClearAndWrite(spreadsheetId, sheetTitle, rows) {
+  const range = `${sheetTitle}!A1:Z10000`;
+  await gsApi('DELETE', `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(range)}:clear`, {});
+  await gsApi('PUT', `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(range)}?valueInputOption=USER_ENTERED`, {
+    range, majorDimension: 'ROWS', values: rows,
+  });
+}
+
+async function gsWriteClients(id) {
+  const rows = [
+    ['ID','Name','Contact Person','Email','Phone','VAT Number','Address'],
+    ...DB.clients().map(c => [c.id, c.name, c.contact||'', c.email||'', c.phone||'', c.vat||'', (c.address||'').replace(/\n/g,' ')]),
+  ];
+  await gsClearAndWrite(id, 'Clients', rows);
+}
+
+async function gsWriteInvoices(id) {
+  const rows = [
+    ['Invoice #','Client','Date','Due Date','Reference','Status','Subtotal','VAT','Total','VAT Rate','Notes','Created'],
+    ...DB.invoices().sort((a,b) => a.number.localeCompare(b.number)).map(inv => [
+      inv.number, clientName(inv.clientId), inv.date, inv.due||'', inv.ref||'',
+      inv.status, inv.subtotal, inv.vat, inv.total, inv.vatRate+'%', inv.notes||'', inv.created,
+    ]),
+  ];
+  await gsClearAndWrite(id, 'Invoices', rows);
+}
+
+async function gsWritePayments(id) {
+  const rows = [
+    ['Date','Client','Invoice','Amount','Method','Reference','Notes'],
+    ...DB.payments().sort((a,b) => a.date.localeCompare(b.date)).map(p => [
+      p.date, clientName(p.clientId), p.invoiceId ? invoiceLabel(p.invoiceId) : '', p.amount, p.method, p.ref||'', p.notes||'',
+    ]),
+  ];
+  await gsClearAndWrite(id, 'Payments', rows);
+}
+
+async function gsWriteSummary(id) {
+  const invoices = DB.invoices();
+  const payments = DB.payments();
+  const totalInvoiced = invoices.reduce((s,i) => s+i.total, 0);
+  const totalPaid = payments.reduce((s,p) => s+p.amount, 0);
+  const byStatus = s => invoices.filter(i => i.status === s).reduce((sum,i) => sum+i.total, 0);
+  const rows = [
+    ['Murrey Consulting — Invoice Summary'],
+    ['Generated', new Date().toLocaleString('en-ZA')],
+    [],
+    ['METRIC','VALUE'],
+    ['Total Clients', DB.clients().length],
+    ['Total Invoices', invoices.length],
+    ['Total Invoiced (R)', totalInvoiced.toFixed(2)],
+    ['Total Payments Received (R)', totalPaid.toFixed(2)],
+    ['Outstanding Balance (R)', (totalInvoiced - totalPaid).toFixed(2)],
+    [],
+    ['BY STATUS','Total (R)','Count'],
+    ['Draft', byStatus('draft').toFixed(2), invoices.filter(i=>i.status==='draft').length],
+    ['Sent', byStatus('sent').toFixed(2), invoices.filter(i=>i.status==='sent').length],
+    ['Partial', byStatus('partial').toFixed(2), invoices.filter(i=>i.status==='partial').length],
+    ['Paid', byStatus('paid').toFixed(2), invoices.filter(i=>i.status==='paid').length],
+    ['Overdue', byStatus('overdue').toFixed(2), invoices.filter(i=>i.status==='overdue').length],
+  ];
+  await gsClearAndWrite(id, 'Summary', rows);
+}
+</script>
+</body>
+</html>
